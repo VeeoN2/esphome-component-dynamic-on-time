@@ -134,7 +134,7 @@ void DynamicOnTime::update_schedule_() {
 }
 
 optional<ESPTime> DynamicOnTime::get_next_schedule() {
-  if (this->enabled_->state || this->days_of_week_.empty())
+  if (!this->enabled_->state || this->days_of_week_.empty())
     return {};
 
   ESPTime now = this->rtc_->now();
