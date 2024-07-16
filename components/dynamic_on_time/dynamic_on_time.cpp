@@ -21,12 +21,12 @@ DynamicOnTime::DynamicOnTime(
   switch_::Switch *fri,
   switch_::Switch *sat,
   switch_::Switch *sun,
-  switch_::Switch *disabled,
+  switch_::Switch *enabled,
   std::vector<esphome::Action<> *> actions):
     rtc_(rtc),
     hour_(hour), minute_(minute),
     mon_(mon), tue_(tue), wed_(wed), thu_(thu), fri_(fri), sat_(sat),
-    sun_(sun), disabled_(disabled), actions_(actions) {}
+    sun_(sun), enabled_(enabled), actions_(actions) {}
 
 std::vector<uint8_t> DynamicOnTime::flags_to_days_of_week_(
   bool mon, bool tue, bool wed, bool thu, bool fri, bool sat, bool sun
@@ -68,7 +68,7 @@ void DynamicOnTime::setup() {
 
   for (switch_::Switch *comp : {
     this->mon_, this->tue_, this->wed_, this->thu_, this->fri_, this->sat_,
-    this->sun_, this->disabled_
+    this->sun_, this->enabled_
   }) {
     comp->add_on_state_callback([this](bool value) {
       this->update_schedule_();
@@ -89,14 +89,14 @@ void DynamicOnTime::update_schedule_() {
     this->trigger_ = new time::CronTrigger(this->rtc_);
   }
 
-  // (Re)create the automation instance but only if scheduled actions aren't
-  // disabled
+  // (Re)create the automation instance but only if scheduled actions are
+  // enabled
   if (this->automation_ != nullptr) {
     delete this->automation_;
     this->automation_ = nullptr;
   }
 
-  if (!this->disabled_->state) {
+  if (this->enabled_->state) {
     this->automation_ = new Automation<>(this->trigger_);
     // Add requested actions to it
     this->automation_->add_actions(this->actions_);
@@ -134,7 +134,7 @@ void DynamicOnTime::update_schedule_() {
 }
 
 optional<ESPTime> DynamicOnTime::get_next_schedule() {
-  if (this->disabled_->state || this->days_of_week_.empty())
+  if (this->enabled_->state || this->days_of_week_.empty())
     return {};
 
   ESPTime now = this->rtc_->now();
@@ -172,7 +172,7 @@ optional<ESPTime> DynamicOnTime::get_next_schedule() {
 
 void DynamicOnTime::dump_config() {
   ESP_LOGCONFIG(tag, "Cron trigger details:");
-  ESP_LOGCONFIG(tag, "Disabled: %s", ONOFF(this->disabled_->state));
+  ESP_LOGCONFIG(tag, "Enabled: %s", ONOFF(this->enabled_->state));
   ESP_LOGCONFIG(
     tag, "Hour (source: '%s'): %.0f",
     this->hour_->get_name().c_str(), this->hour_->state);
