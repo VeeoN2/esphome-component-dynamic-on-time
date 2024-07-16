@@ -104,7 +104,7 @@ dynamic_on_time:
     fri: lawn_sprinklers_fri
     sat: lawn_sprinklers_sat
     sun: lawn_sprinklers_sun
-    disabled: lawn_sprinklers_disabled
+    enabled: lawn_sprinklers_enabled
     on_time:
       - logger.log:
           format: 'schedule: Starting full sprinkler cycle'
