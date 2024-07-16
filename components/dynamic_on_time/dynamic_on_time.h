@@ -35,7 +35,7 @@ class DynamicOnTime : public Component {
   switch_::Switch *fri_;
   switch_::Switch *sat_;
   switch_::Switch *sun_;
-  switch_::Switch *disabled_;
+  switch_::Switch *enabled_;
   std::vector<esphome::Action<> *> actions_;
   time::CronTrigger *trigger_{nullptr};
   Automation<> *automation_{nullptr};
