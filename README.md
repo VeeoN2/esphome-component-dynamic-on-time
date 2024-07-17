@@ -1,5 +1,6 @@
 # ESPHome: Dynamic 'on-time' component
-
+## Fork Info
+Disable switch was replaced by Enable Switch, when it is enabled in home asisstant schedule performs actions.
 ## Overview
 Basically, it functions similar to
 [time.on_time](https://esphome.io/components/time/index.html#on-time-trigger)
